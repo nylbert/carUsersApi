@@ -7,7 +7,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.car.users.api.constant.UserConstants;
-import com.car.users.api.dto.CarDTO;
 import com.car.users.api.dto.UserDTO;
 import com.car.users.api.exception.DuplicatedFieldException;
 import com.car.users.api.exception.InvalidFieldException;
@@ -26,9 +25,11 @@ import io.micrometer.common.util.StringUtils;
 public class UserService implements IUserService {
 
 	private UserRepository userRepository;
+	private ICarService carService;
 
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, CarService carService) {
 		this.userRepository = userRepository;
+		this.carService = carService;
 	}
 
 	@Override
@@ -47,7 +48,14 @@ public class UserService implements IUserService {
 		validateUniqueness(userDTO);
 
 		User user = UserMapper.INSTANCE.userDtoToUser(userDTO);
-		return UserMapper.INSTANCE.userToUserDto(this.userRepository.save(user));
+		User newUser = this.userRepository.save(user);
+		
+		List<Car> cars = this.carService.insert(userDTO.getCars(), newUser.getId());
+		
+		UserDTO newUserDTO = UserMapper.INSTANCE.userToUserDto(newUser);
+		newUserDTO.setCars(CarMapper.INSTANCE.carToCarDto(cars));
+
+		return newUserDTO;
 	}
 
 	@Override
@@ -55,59 +63,49 @@ public class UserService implements IUserService {
 		Iterable<User> users = this.userRepository.findAll();
 
 		List<UserDTO> userDTOs = new ArrayList<>();
+		
 		for (User user : users) {
-			UserDTO dto = UserMapper.INSTANCE.userToUserDto(user);
-			userDTOs.add(dto);
+			UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user);
+			userDTO.setCars(this.carService.findCarsDTOByUserId(user.getId()));
+			userDTOs.add(userDTO);
 		}
+		
 		return userDTOs;
 	}
 
 	@Override
-	public UserDTO findById(Long id) {
+	public UserDTO findById(Integer id) {
 		Optional<User> user = this.userRepository.findById(id);
-		return UserMapper.INSTANCE.userToUserDto(user.get());
+		UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user.get());
+		userDTO.setCars(this.carService.findCarsDTOByUserId(id));
+		return userDTO;
 	}
 
 	@Override
-	public void deleteById(Long id) {
+	public void deleteById(Integer id) {
 		Optional<User> user = this.userRepository.findById(id);
 		this.userRepository.delete(user.get());
 	}
 
 	@Override
-	public UserDTO updateById(Long id, UserDTO userDTO) {
+	public UserDTO updateById(Integer id, UserDTO userDTO) {
 		validateRequiredFields(userDTO);
 		validateInvalidFields(userDTO);
-		validateUniqueness(userDTO);
+		validateUniqueness(id, userDTO);
 
 		Optional<User> optionalUser = this.userRepository.findById(id);
 		User user = optionalUser.get();
 
-		addUpdatedFields(userDTO, user);
-
+		UserMapper.INSTANCE.userDtoToUser(userDTO, user);
 		User updatedUser = this.userRepository.save(user);
 
-		return UserMapper.INSTANCE.userToUserDto(updatedUser);
-	}
-
-	private void addUpdatedFields(UserDTO userDTO, User user) {
-		user.setBirthday(userDTO.getBirthday());
-		user.setEmail(userDTO.getEmail());
-		user.setFirstName(userDTO.getFirstName());
-		user.setLastName(userDTO.getLastName());
-		user.setLogin(userDTO.getLogin());
-		user.setPassword(userDTO.getPassword());
-		user.setPhone(userDTO.getPhone());
-
-		List<Car> cars = new ArrayList<Car>();
-
-		for (CarDTO carDTO : userDTO.getCars()) {
-			Car car = CarMapper.INSTANCE.carDtoToCar(carDTO);
-			car.setOwner(user);
-			cars.add(car);
-		}
-
-		user.setCars(cars);
+		this.carService.deleteByUserId(id);
+		List<Car> cars = this.carService.insert(userDTO.getCars(), id);
+		
+		UserDTO updatedUserDTO = UserMapper.INSTANCE.userToUserDto(updatedUser);
+		updatedUserDTO.setCars(CarMapper.INSTANCE.carToCarDto(cars));
+		
+		return userDTO;
 	}
 
 	private void validateInvalidFields(UserDTO userDTO) {
@@ -169,20 +167,24 @@ public class UserService implements IUserService {
 	}
 
 	private void validateUniqueness(UserDTO userDTO) {
-		if (StringUtils.isNotBlank(userDTO.getEmail())) {
-			boolean emailExists = this.userRepository.countByEmail(userDTO.getEmail()) > 0;
+		validateUniqueness(null, userDTO);
+	}
 
-			if (emailExists) {
-				throw new DuplicatedFieldException(UserConstants.EMAIL);
-			}
+	private void validateUniqueness(Integer id, UserDTO userDTO) {
+		Long countEmail = id == null ? this.userRepository.countByEmail(userDTO.getEmail())
+				: this.userRepository.countByEmailAndIdNot(userDTO.getEmail(), id);
+		boolean emailExists = countEmail > 0;
+
+		if (emailExists) {
+			throw new DuplicatedFieldException(UserConstants.EMAIL);
 		}
 
-		if (StringUtils.isNotBlank(userDTO.getLogin())) {
-			boolean loginExists = this.userRepository.countByLogin(userDTO.getLogin()) > 0;
+		Long countLogin = id == null ? this.userRepository.countByLogin(userDTO.getLogin())
+				: this.userRepository.countByLoginAndIdNot(userDTO.getLogin(), id);
+		boolean loginExists = countLogin > 0;
 
-			if (loginExists) {
-				throw new DuplicatedFieldException(UserConstants.LOGIN);
-			}
+		if (loginExists) {
+			throw new DuplicatedFieldException(UserConstants.LOGIN);
 		}
 	}
 }

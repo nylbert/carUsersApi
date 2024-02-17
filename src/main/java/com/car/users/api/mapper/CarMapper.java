@@ -1,5 +1,7 @@
 package com.car.users.api.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -13,8 +15,10 @@ public interface CarMapper {
 	CarMapper INSTANCE = Mappers.getMapper(CarMapper.class);
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(target = "owner", ignore = true)
-	Car carDtoToCar(CarDTO carDTO) ;
+	@Mapping(target = "userId", source = "userId")
+	Car carDtoToCar(CarDTO carDTO, Integer userId);
 	
 	CarDTO carToCarDto(Car car);
+	
+	List<CarDTO> carToCarDto(List<Car> cars);
 }

@@ -17,12 +17,12 @@ import com.car.users.api.dto.UserDTO;
 import com.car.users.api.service.IUserService;
 
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/cars")
+public class CarController {
 
 	private IUserService userService;
 	
-	public UserController(IUserService userService) {
+	public CarController(IUserService userService) {
 		this.userService = userService;
 	}
 	

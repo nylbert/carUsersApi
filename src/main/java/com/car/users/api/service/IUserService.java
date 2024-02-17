@@ -12,10 +12,10 @@ public interface IUserService {
 
 	List<UserDTO> findAll();
 
-	UserDTO findById(Long id);
+	UserDTO findById(Integer id);
 
-	void deleteById(Long id);
+	void deleteById(Integer id);
 
-	UserDTO updateById(Long id, UserDTO userDTO);
+	UserDTO updateById(Integer id, UserDTO userDTO);
 
 }

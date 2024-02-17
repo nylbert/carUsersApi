@@ -1,15 +1,14 @@
 package com.car.users.api.model;
 
 import java.util.Date;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -21,7 +20,7 @@ public class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-	private Long id;
+	private Integer id;
 	
 	@Column(name = "first_name", length = 50, nullable = false)
 	private String firstName;
@@ -44,6 +43,8 @@ public class User {
 	@Column(name = "phone", nullable = false)
 	private String phone;
 	
-	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-	private List<Car> cars;
+	public void setEncryptedPassword(String password) {
+		this.password = new BCryptPasswordEncoder().encode(password);
+	}
+
 }

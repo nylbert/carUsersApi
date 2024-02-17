@@ -1,6 +1,7 @@
 package com.car.users.api.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import com.car.users.api.dto.UserDTO;
@@ -11,8 +12,9 @@ public interface UserMapper {
 	
 	UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-	User userDtoToUser(UserDTO userDTO) ;
+	@Mapping(target = "id", ignore = true)
+	User userDtoToUser(UserDTO userDTO);
 	
-	UserDTO userToUserDto(User car);
+	UserDTO userToUserDto(User user);
 	
 }

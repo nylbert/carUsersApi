@@ -29,7 +29,7 @@ public class User {
 	@Column(name = "last_name", length = 50, nullable = false)
 	private String lastName;
 	
-	@Column(name = "email", length = 50, nullable = false)
+	@Column(name = "email", nullable = false)
 	private String email;
 	
 	@Column(name = "birthday", nullable = false)
@@ -41,7 +41,7 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password;
 	
-	@Column(name = "phone", length = 11, nullable = false)
+	@Column(name = "phone", nullable = false)
 	private String phone;
 	
 	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)

@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.car.users.api.dto.CarDTO;
-import com.car.users.api.mapper.CarMapper;
-import com.car.users.api.model.Car;
+import com.car.users.api.domain.dto.CarDTO;
+import com.car.users.api.domain.mapper.CarMapper;
+import com.car.users.api.domain.model.Car;
 import com.car.users.api.repository.CarRepository;
 
 @Service

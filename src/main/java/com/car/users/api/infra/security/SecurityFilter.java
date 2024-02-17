@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.car.users.api.dto.UserDTO;
+import com.car.users.api.domain.dto.UserDTO;
 import com.car.users.api.service.IUserService;
 import com.car.users.api.service.UserService;
 

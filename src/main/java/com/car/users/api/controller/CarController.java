@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.car.users.api.dto.UserDTO;
+import com.car.users.api.domain.dto.UserDTO;
 import com.car.users.api.service.IUserService;
 
 @RestController

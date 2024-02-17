@@ -2,7 +2,7 @@ package com.car.users.api.service;
 
 import java.util.List;
 
-import com.car.users.api.dto.UserDTO;
+import com.car.users.api.domain.dto.UserDTO;
 
 public interface IUserService {
 

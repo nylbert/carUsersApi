@@ -2,8 +2,8 @@ package com.car.users.api.service;
 
 import java.util.List;
 
-import com.car.users.api.dto.CarDTO;
-import com.car.users.api.model.Car;
+import com.car.users.api.domain.dto.CarDTO;
+import com.car.users.api.domain.model.Car;
 
 public interface ICarService {
 

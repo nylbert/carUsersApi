@@ -1,4 +1,4 @@
-package com.car.users.api.dto;
+package com.car.users.api.domain.dto;
 
 import java.util.Date;
 import java.util.List;

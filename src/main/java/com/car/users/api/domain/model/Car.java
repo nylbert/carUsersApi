@@ -1,4 +1,4 @@
-package com.car.users.api.model;
+package com.car.users.api.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

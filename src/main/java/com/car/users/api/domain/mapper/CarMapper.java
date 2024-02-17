@@ -1,4 +1,4 @@
-package com.car.users.api.mapper;
+package com.car.users.api.domain.mapper;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import com.car.users.api.dto.CarDTO;
-import com.car.users.api.model.Car;
+import com.car.users.api.domain.dto.CarDTO;
+import com.car.users.api.domain.model.Car;
 
 @Mapper
 public interface CarMapper {

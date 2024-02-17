@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.car.users.api.model.Car;
+import com.car.users.api.domain.model.Car;
 
 @Repository
 public interface CarRepository extends CrudRepository<Car, Integer> {

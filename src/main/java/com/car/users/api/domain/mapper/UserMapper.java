@@ -1,12 +1,12 @@
-package com.car.users.api.mapper;
+package com.car.users.api.domain.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-import com.car.users.api.dto.UserDTO;
-import com.car.users.api.model.User;
+import com.car.users.api.domain.dto.UserDTO;
+import com.car.users.api.domain.model.User;
 
 @Mapper
 public interface UserMapper {

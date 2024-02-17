@@ -7,15 +7,15 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.car.users.api.constant.UserConstants;
-import com.car.users.api.dto.UserDTO;
+import com.car.users.api.domain.dto.UserDTO;
+import com.car.users.api.domain.mapper.CarMapper;
+import com.car.users.api.domain.mapper.UserMapper;
+import com.car.users.api.domain.model.Car;
+import com.car.users.api.domain.model.User;
 import com.car.users.api.exception.DuplicatedFieldException;
 import com.car.users.api.exception.InvalidFieldException;
 import com.car.users.api.exception.InvalidLoginException;
 import com.car.users.api.exception.RequiredFieldException;
-import com.car.users.api.mapper.CarMapper;
-import com.car.users.api.mapper.UserMapper;
-import com.car.users.api.model.Car;
-import com.car.users.api.model.User;
 import com.car.users.api.repository.UserRepository;
 import com.car.users.api.util.UserUtils;
 

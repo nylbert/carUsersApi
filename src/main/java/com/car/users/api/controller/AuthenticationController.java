@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.car.users.api.dto.AuthenticationDTO;
-import com.car.users.api.dto.LoginResponseDTO;
+import com.car.users.api.domain.dto.AuthenticationDTO;
+import com.car.users.api.domain.dto.LoginResponseDTO;
 import com.car.users.api.infra.security.JwtTokenService;
 
 @RestController

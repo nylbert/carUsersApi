@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.car.users.api.dto.UserDTO;
+import com.car.users.api.domain.dto.UserDTO;
 
 @Service
 public class AuthorizationService implements UserDetailsService {

@@ -1,15 +1,13 @@
 package com.car.users.api.infra.security;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.car.users.api.domain.dto.UserDTO;
+import com.car.users.api.domain.model.User;
 import com.car.users.api.service.IUserService;
 import com.car.users.api.service.UserService;
 
@@ -36,8 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 		
 		if(token != null) {
 			var login = this.jwtTokenService.validateToken(token);
-			UserDTO userDTO = this.userService.findUserByLogin(login);
-			User user = new User(userDTO.getLogin(), userDTO.getPassword(), List.of());
+			User user = this.userService.find(login);
 			
 			var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);

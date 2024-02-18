@@ -11,5 +11,7 @@ import com.car.users.api.domain.model.Car;
 public interface CarRepository extends CrudRepository<Car, Integer> {
 	
 	List<Car> findByUserId(Integer userId);
+	
+	Car findByIdAndUserId(Integer id, Integer userId);
 
 }

@@ -13,10 +13,14 @@ public interface ICarService {
 
 	Car insert(Car car);
 
-	List<Car> findCarsByUserId(Integer userId);
+	List<Car> find(Integer userId);
 
-	void deleteByUserId(Integer userId);
+	Car find(Integer id, Integer userId);
 
-	List<CarDTO> findCarsDTOByUserId(Integer userId);
+	void delete(Integer userId);
+
+	void delete(Integer id, Integer userId);
+
+	Car update(Integer id, Integer userId, CarDTO carDTO);
 
 }

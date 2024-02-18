@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.car.users.api.constant.UserConstants;
+import com.car.users.api.domain.dto.CarDTO;
 import com.car.users.api.domain.dto.UserDTO;
 import com.car.users.api.domain.mapper.CarMapper;
 import com.car.users.api.domain.mapper.UserMapper;
@@ -32,13 +33,39 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public UserDTO findUserByLogin(String login) {
+	public User find(String login) {
 		User user = userRepository.findByLogin(login);
 		if (user == null) {
 			throw new RuntimeException();
 		}
-		return UserMapper.INSTANCE.userToUserDto(user);
+		return user;
 	}
+
+	@Override
+	public List<UserDTO> find() {
+		Iterable<User> users = this.userRepository.findAll();
+
+		List<UserDTO> userDTOs = new ArrayList<>();
+		
+		for (User user : users) {
+			UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user);
+			List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carService.find(user.getId()));
+			userDTO.setCars(cars);
+			userDTOs.add(userDTO);
+		}
+		
+		return userDTOs;
+	}
+
+	@Override
+	public UserDTO find(Integer id) {
+		Optional<User> user = this.userRepository.findById(id);
+		UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user.get());
+		List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carService.find(id));
+		userDTO.setCars(cars);
+		return userDTO;
+	}
+
 
 	@Override
 	public UserDTO insert(UserDTO userDTO) {
@@ -58,36 +85,13 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public List<UserDTO> findAll() {
-		Iterable<User> users = this.userRepository.findAll();
-
-		List<UserDTO> userDTOs = new ArrayList<>();
-		
-		for (User user : users) {
-			UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user);
-			userDTO.setCars(this.carService.findCarsDTOByUserId(user.getId()));
-			userDTOs.add(userDTO);
-		}
-		
-		return userDTOs;
-	}
-
-	@Override
-	public UserDTO findById(Integer id) {
-		Optional<User> user = this.userRepository.findById(id);
-		UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user.get());
-		userDTO.setCars(this.carService.findCarsDTOByUserId(id));
-		return userDTO;
-	}
-
-	@Override
-	public void deleteById(Integer id) {
+	public void delete(Integer id) {
 		Optional<User> user = this.userRepository.findById(id);
 		this.userRepository.delete(user.get());
 	}
 
 	@Override
-	public UserDTO updateById(Integer id, UserDTO userDTO) {
+	public UserDTO update(Integer id, UserDTO userDTO) {
 		validateRequiredFields(userDTO);
 		validateInvalidFields(userDTO);
 		validateUniqueness(id, userDTO);
@@ -98,7 +102,7 @@ public class UserService implements IUserService {
 		UserMapper.INSTANCE.userDtoToUser(userDTO, user);
 		User updatedUser = this.userRepository.save(user);
 
-		this.carService.deleteByUserId(id);
+		this.carService.delete(id);
 		List<Car> cars = this.carService.insert(userDTO.getCars(), id);
 		
 		UserDTO updatedUserDTO = UserMapper.INSTANCE.userToUserDto(updatedUser);

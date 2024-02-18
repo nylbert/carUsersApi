@@ -38,19 +38,31 @@ public class CarService implements ICarService {
 	}
 	
 	@Override
-	public List<Car> findCarsByUserId(Integer userId) {
+	public List<Car> find(Integer userId) {
 		return this.carRepository.findByUserId(userId);
 	}
 	
 	@Override
-	public List<CarDTO> findCarsDTOByUserId(Integer userId) {
-		return CarMapper.INSTANCE.carToCarDto(this.carRepository.findByUserId(userId));
+	public Car find(Integer id, Integer userId) {
+		return this.carRepository.findByIdAndUserId(id, userId);
 	}
 	
 	@Override
-	public void deleteByUserId(Integer userId) {
-		List<Car> cars = findCarsByUserId(userId);
+	public void delete(Integer userId) {
+		List<Car> cars = find(userId);
 		cars.forEach(car -> this.carRepository.delete(car));
 	}
 	
+	@Override
+	public void delete(Integer id, Integer userId) {
+		Car car = find(id, userId);
+		this.carRepository.delete(car);
+	}
+	
+	@Override
+	public Car update(Integer id, Integer userId, CarDTO carDTO) {
+		Car car = find(id, userId);
+		CarMapper.INSTANCE.carDtoToCar(carDTO, car);
+		return this.carRepository.save(car);
+	}
 }

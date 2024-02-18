@@ -3,19 +3,20 @@ package com.car.users.api.service;
 import java.util.List;
 
 import com.car.users.api.domain.dto.UserDTO;
+import com.car.users.api.domain.model.User;
 
 public interface IUserService {
 
-	UserDTO findUserByLogin(String login);
+	User find(String login);
+
+	List<UserDTO> find();
+
+	UserDTO find(Integer id);
 
 	UserDTO insert(UserDTO userDTO);
 
-	List<UserDTO> findAll();
+	UserDTO update(Integer id, UserDTO userDTO);
 
-	UserDTO findById(Integer id);
-
-	void deleteById(Integer id);
-
-	UserDTO updateById(Integer id, UserDTO userDTO);
+	void delete(Integer id);
 
 }

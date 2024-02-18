@@ -28,7 +28,7 @@ public class UserController {
 	
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> listUsers(){
-		List<UserDTO> users = this.userService.findAll();
+		List<UserDTO> users = this.userService.find();
 		return new ResponseEntity<List<UserDTO>>(users, HttpStatus.OK);
 	}
 	
@@ -40,19 +40,19 @@ public class UserController {
 	
 	@GetMapping("{id}")
 	public ResponseEntity<UserDTO> listById(@PathVariable Integer id){
-		UserDTO user = this.userService.findById(id);
+		UserDTO user = this.userService.find(id);
 		return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("{id}")
 	public ResponseEntity<UserDTO> deleteById(@PathVariable Integer id){
-		this.userService.deleteById(id);
+		this.userService.delete(id);
 		return new ResponseEntity<UserDTO>(HttpStatus.OK);
 	}
 	
 	@PutMapping("{id}")
 	public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO) {
-		UserDTO user = this.userService.updateById(id, userDTO);
+		UserDTO user = this.userService.update(id, userDTO);
 		return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
 	}
 	

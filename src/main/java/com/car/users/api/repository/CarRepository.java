@@ -13,5 +13,9 @@ public interface CarRepository extends CrudRepository<Car, Integer> {
 	List<Car> findByUserId(Integer userId);
 	
 	Car findByIdAndUserId(Integer id, Integer userId);
-
+	
+	Long countByLicensePlate(String licensePlate);
+	
+    Long countByLicensePlateAndIdNot(String licensePlate, Integer id);
+	
 }

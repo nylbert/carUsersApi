@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 
 @Service
 public class JwtTokenService {
@@ -22,35 +20,27 @@ public class JwtTokenService {
 	private Integer expiration;
 
 	public String generateToken(UserDetails userDetails) {
-		try {
-			Algorithm algorithm = Algorithm.HMAC256(secret);
-			
-			Date date = getExpirationDate();
-			
-			String token = JWT.create()
-					.withIssuer("auth-api")
-					.withSubject(userDetails.getUsername())
-					.withExpiresAt(date)
-					.sign(algorithm);
-			
-			return token;
-		} catch (JWTCreationException e) {
-			throw new RuntimeException("Error during genereation token", e);
-		}
+		Algorithm algorithm = Algorithm.HMAC256(secret);
+		
+		Date date = getExpirationDate();
+		
+		String token = JWT.create()
+				.withIssuer("auth-api")
+				.withSubject(userDetails.getUsername())
+				.withExpiresAt(date)
+				.sign(algorithm);
+		
+		return token;
 	}
 	
 	public String validateToken(String token) {
-		try {
-			Algorithm algorithm = Algorithm.HMAC256(secret);
-			
-			return JWT.require(algorithm)
-					.withIssuer("auth-api")
-					.build()
-					.verify(token)
-					.getSubject();
-		} catch (JWTVerificationException e) {
-			return "";
-		}
+		Algorithm algorithm = Algorithm.HMAC256(secret);
+		
+		return JWT.require(algorithm)
+				.withIssuer("auth-api")
+				.build()
+				.verify(token)
+				.getSubject();
 	}
 
 	private Date getExpirationDate() {

@@ -2,11 +2,15 @@ package com.car.users.api.infra.security;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.car.users.api.domain.model.User;
 import com.car.users.api.service.IUserService;
 import com.car.users.api.service.UserService;
@@ -21,10 +25,13 @@ public class SecurityFilter extends OncePerRequestFilter {
 	
 	private JwtTokenService jwtTokenService;
 	private IUserService userService;
-	
-	public SecurityFilter(JwtTokenService jwtTokenService, UserService userService) {
+	private HandlerExceptionResolver exceptionResolver;
+
+	public SecurityFilter(JwtTokenService jwtTokenService, UserService userService,
+			@Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
 		this.jwtTokenService = jwtTokenService;
 		this.userService = userService;
+		this.exceptionResolver = exceptionResolver;
 	}
 
 	@Override
@@ -32,15 +39,24 @@ public class SecurityFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		var token = this.recoverToken(request);
 		
-		if(token != null) {
+		if(token == null) {
+			response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write(HttpStatus.UNAUTHORIZED.name());
+            return;
+        }
+		
+		try {
 			var login = this.jwtTokenService.validateToken(token);
 			User user = this.userService.find(login);
 			
 			var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-		}
+			filterChain.doFilter(request, response);
 		
-		filterChain.doFilter(request, response);
+		} catch (JWTVerificationException e) {
+			exceptionResolver.resolveException(request, response, null, e);
+		}
+			
 		
 	}
 	

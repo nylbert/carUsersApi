@@ -16,6 +16,7 @@ import com.car.users.api.domain.model.User;
 import com.car.users.api.infra.exception.DuplicatedFieldException;
 import com.car.users.api.infra.exception.InvalidFieldException;
 import com.car.users.api.infra.exception.RequiredFieldException;
+import com.car.users.api.repository.CarRepository;
 import com.car.users.api.repository.UserRepository;
 import com.car.users.api.util.UserUtils;
 
@@ -25,11 +26,11 @@ import io.micrometer.common.util.StringUtils;
 public class UserService implements IUserService {
 
 	private UserRepository userRepository;
-	private ICarService carService;
+	private CarRepository carRepository;
 
-	public UserService(UserRepository userRepository, CarService carService) {
+	public UserService(UserRepository userRepository, CarRepository carRepository) {
 		this.userRepository = userRepository;
-		this.carService = carService;
+		this.carRepository = carRepository;
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class UserService implements IUserService {
 		
 		for (User user : users) {
 			UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user);
-			List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carService.find(user.getId()));
+			List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carRepository.findByUserId(user.getId()));
 			userDTO.setCars(cars);
 			userDTOs.add(userDTO);
 		}
@@ -61,7 +62,7 @@ public class UserService implements IUserService {
 	public UserDTO find(Integer id) {
 		Optional<User> user = this.userRepository.findById(id);
 		UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user.get());
-		List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carService.find(id));
+		List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carRepository.findByUserId(id));
 		userDTO.setCars(cars);
 		return userDTO;
 	}
@@ -76,7 +77,7 @@ public class UserService implements IUserService {
 		User user = UserMapper.INSTANCE.userDtoToUser(userDTO);
 		User newUser = this.userRepository.save(user);
 		
-		List<Car> cars = this.carService.insert(userDTO.getCars(), newUser.getId());
+		List<Car> cars = insertCars(userDTO, newUser);
 		
 		UserDTO newUserDTO = UserMapper.INSTANCE.userToUserDto(newUser);
 		newUserDTO.setCars(CarMapper.INSTANCE.carToCarDto(cars));
@@ -102,13 +103,25 @@ public class UserService implements IUserService {
 		UserMapper.INSTANCE.userDtoToUser(userDTO, user);
 		User updatedUser = this.userRepository.save(user);
 
-		this.carService.delete(id);
-		List<Car> cars = this.carService.insert(userDTO.getCars(), id);
+		List<Car> deletedCars = this.carRepository.findByUserId(id);
+		deletedCars.forEach(car -> this.carRepository.delete(car));
+		
+		List<Car> cars = insertCars(userDTO, user);
 		
 		UserDTO updatedUserDTO = UserMapper.INSTANCE.userToUserDto(updatedUser);
 		updatedUserDTO.setCars(CarMapper.INSTANCE.carToCarDto(cars));
 		
-		return userDTO;
+		return updatedUserDTO;
+	}
+
+	private List<Car> insertCars(UserDTO userDTO, User user) {
+		List<Car> cars = List.of();
+		
+		userDTO.getCars().forEach(carDTO -> {
+			Car car = CarMapper.INSTANCE.carDtoToCar(carDTO, user.getId());
+			cars.add(this.carRepository.save(car));
+		});
+		return cars;
 	}
 
 	private void validateInvalidFields(UserDTO userDTO) {

@@ -1,6 +1,5 @@
 package com.car.users.api.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -20,49 +19,31 @@ public class CarService implements ICarService {
 	}
 	
 	@Override
-	public List<Car> insert(List<CarDTO> carsDTO, Integer userId) {
-		List<Car> cars = new ArrayList<>();
-		carsDTO.forEach(car -> cars.add(insert(car, userId)));
-		return cars;
-	}
-	
-	@Override
-	public Car insert(CarDTO carDTO, Integer userId) {
+	public CarDTO insert(CarDTO carDTO, Integer userId) {
 		Car car = CarMapper.INSTANCE.carDtoToCar(carDTO, userId);
-		return insert(car);
+		return CarMapper.INSTANCE.carToCarDto(this.carRepository.save(car));
 	}
 	
 	@Override
-	public Car insert(Car car) {
-		return this.carRepository.save(car);
+	public List<CarDTO> find(Integer userId) {
+		return CarMapper.INSTANCE.carToCarDto(this.carRepository.findByUserId(userId));
 	}
 	
 	@Override
-	public List<Car> find(Integer userId) {
-		return this.carRepository.findByUserId(userId);
-	}
-	
-	@Override
-	public Car find(Integer id, Integer userId) {
-		return this.carRepository.findByIdAndUserId(id, userId);
-	}
-	
-	@Override
-	public void delete(Integer userId) {
-		List<Car> cars = find(userId);
-		cars.forEach(car -> this.carRepository.delete(car));
+	public CarDTO find(Integer id, Integer userId) {
+		return CarMapper.INSTANCE.carToCarDto(this.carRepository.findByIdAndUserId(id, userId));
 	}
 	
 	@Override
 	public void delete(Integer id, Integer userId) {
-		Car car = find(id, userId);
+		Car car = this.carRepository.findByIdAndUserId(id, userId);
 		this.carRepository.delete(car);
 	}
 	
 	@Override
-	public Car update(Integer id, Integer userId, CarDTO carDTO) {
-		Car car = find(id, userId);
+	public CarDTO update(Integer id, Integer userId, CarDTO carDTO) {
+		Car car = this.carRepository.findByIdAndUserId(id, userId);
 		CarMapper.INSTANCE.carDtoToCar(carDTO, car);
-		return this.carRepository.save(car);
+		return CarMapper.INSTANCE.carToCarDto(this.carRepository.save(car));
 	}
 }

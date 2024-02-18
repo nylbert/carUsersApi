@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.car.users.api.domain.dto.CarDTO;
-import com.car.users.api.domain.mapper.CarMapper;
-import com.car.users.api.domain.model.Car;
 import com.car.users.api.domain.model.User;
 import com.car.users.api.service.ICarService;
 
@@ -33,19 +31,19 @@ public class CarController {
 	@GetMapping
 	public ResponseEntity<List<CarDTO>> listCars() {
 		var cars = this.carService.find(getUserId());
-		return new ResponseEntity<List<CarDTO>>(CarMapper.INSTANCE.carToCarDto(cars), HttpStatus.OK);
+		return new ResponseEntity<List<CarDTO>>(cars, HttpStatus.OK);
 	}
 
 	@PostMapping
 	public ResponseEntity<CarDTO> createCar(@RequestBody CarDTO carDTO) {
 		var car = this.carService.insert(carDTO, getUserId());
-		return new ResponseEntity<>(CarMapper.INSTANCE.carToCarDto(car), HttpStatus.OK);
+		return new ResponseEntity<>(car, HttpStatus.OK);
 	}
 
 	@GetMapping("{id}")
 	public ResponseEntity<CarDTO> listCarsById(@PathVariable Integer id) {
 		var car = this.carService.find(id, getUserId());
-		return new ResponseEntity<CarDTO>(CarMapper.INSTANCE.carToCarDto(car), HttpStatus.OK);
+		return new ResponseEntity<CarDTO>(car, HttpStatus.OK);
 	}
 
 	@DeleteMapping("{id}")
@@ -56,8 +54,8 @@ public class CarController {
 
 	@PutMapping("{id}")
 	public ResponseEntity<CarDTO> updateCarById(@PathVariable Integer id, @RequestBody CarDTO carDTO) {
-		Car car = this.carService.update(id, getUserId(), carDTO);
-		return new ResponseEntity<CarDTO>(CarMapper.INSTANCE.carToCarDto(car), HttpStatus.OK);
+		CarDTO car = this.carService.update(id, getUserId(), carDTO);
+		return new ResponseEntity<CarDTO>(car, HttpStatus.OK);
 	}
 	
 	private Integer getUserId() {

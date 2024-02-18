@@ -12,10 +12,9 @@ import com.car.users.api.domain.mapper.CarMapper;
 import com.car.users.api.domain.mapper.UserMapper;
 import com.car.users.api.domain.model.Car;
 import com.car.users.api.domain.model.User;
-import com.car.users.api.exception.DuplicatedFieldException;
-import com.car.users.api.exception.InvalidFieldException;
-import com.car.users.api.exception.InvalidLoginException;
-import com.car.users.api.exception.RequiredFieldException;
+import com.car.users.api.infra.exception.DuplicatedFieldException;
+import com.car.users.api.infra.exception.InvalidFieldException;
+import com.car.users.api.infra.exception.RequiredFieldException;
 import com.car.users.api.repository.UserRepository;
 import com.car.users.api.util.UserUtils;
 
@@ -36,7 +35,7 @@ public class UserService implements IUserService {
 	public UserDTO findUserByLogin(String login) {
 		User user = userRepository.findByLogin(login);
 		if (user == null) {
-			throw new InvalidLoginException();
+			throw new RuntimeException();
 		}
 		return UserMapper.INSTANCE.userToUserDto(user);
 	}

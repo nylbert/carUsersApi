@@ -1,5 +1,7 @@
 package com.car.users.api.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +16,8 @@ import com.car.users.api.domain.dto.ErrorResponseDTO;
 import com.car.users.api.domain.dto.LoginResponseDTO;
 import com.car.users.api.domain.model.User;
 import com.car.users.api.infra.security.JwtTokenService;
+import com.car.users.api.service.IUserService;
+import com.car.users.api.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,12 +33,17 @@ public class AuthenticationController {
 
 	private AuthenticationManager authenticationManager;
 	private JwtTokenService jwtTokenService;
+	private IUserService userService;
 	
-	public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService) {
+	public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService,
+			UserService userService) {
+		super();
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenService = jwtTokenService;
+		this.userService = userService;
 	}
-	
+
+
 	@PostMapping
 	@Operation(summary = "Enpoint de login do usuário", description = "Informe o login e senha atraves de um json e faça seu login", tags = { "auth" })
 	@ApiResponses({
@@ -46,6 +55,9 @@ public class AuthenticationController {
 		var auth = this.authenticationManager.authenticate(usernamePassword);
 		var user = (User) auth.getPrincipal();
 		var token = this.jwtTokenService.generateToken(user);
+		
+		user.setLastLogin(LocalDate.now());
+		this.userService.update(user);
 		
 		return new ResponseEntity<>(new LoginResponseDTO(token, user.getUsername()), HttpStatus.OK);
 	}

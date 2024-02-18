@@ -1,10 +1,12 @@
 package com.car.users.api.domain.model;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -49,13 +51,19 @@ public class User implements UserDetails {
 	@Column(name = "phone", nullable = false)
 	private String phone;
 	
+	@Column(name = "createdAt", nullable = false)
+	private LocalDate createdAt;
+	
+	@Column(name = "lastLogin")
+	private LocalDate lastLogin;
+	
 	public void setEncryptedPassword(String password) {
 		this.password = new BCryptPasswordEncoder().encode(password);
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of();
+		return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
 	}
 
 	@Override

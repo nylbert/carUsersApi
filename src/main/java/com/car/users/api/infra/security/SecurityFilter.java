@@ -2,13 +2,11 @@ package com.car.users.api.infra.security;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.car.users.api.domain.model.User;
@@ -25,13 +23,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 	
 	private JwtTokenService jwtTokenService;
 	private IUserService userService;
-	private HandlerExceptionResolver exceptionResolver;
 
-	public SecurityFilter(JwtTokenService jwtTokenService, UserService userService,
-			@Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver) {
+	public SecurityFilter(JwtTokenService jwtTokenService, UserService userService) {
 		this.jwtTokenService = jwtTokenService;
 		this.userService = userService;
-		this.exceptionResolver = exceptionResolver;
 	}
 
 	@Override
@@ -46,10 +41,11 @@ public class SecurityFilter extends OncePerRequestFilter {
 				
 				var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(authentication);
-				
 			
 			} catch (JWTVerificationException e) {
-				exceptionResolver.resolveException(request, response, null, e);
+				response.setStatus(HttpStatus.UNAUTHORIZED.value());
+	            response.getWriter().write("Unauthorized - invalid session");
+	            return;
 			}
 		}
 		else if(request.getRequestURI().contains("/cars") || request.getRequestURI().contains("/me")){
@@ -59,7 +55,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 		}
 		
 		filterChain.doFilter(request, response);
-		
 	}
 	
 	private String recoverToken(HttpServletRequest httpServletRequest) {

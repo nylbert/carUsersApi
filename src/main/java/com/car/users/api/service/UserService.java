@@ -1,5 +1,6 @@
 package com.car.users.api.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -75,6 +76,7 @@ public class UserService implements IUserService {
 		validateUniqueness(userDTO);
 
 		User user = UserMapper.INSTANCE.userDtoToUser(userDTO);
+		user.setCreatedAt(LocalDate.now());
 		User newUser = this.userRepository.save(user);
 		
 		List<Car> cars = insertCars(userDTO, newUser);
@@ -113,9 +115,14 @@ public class UserService implements IUserService {
 		
 		return updatedUserDTO;
 	}
+	
+	@Override
+	public void update(User user) {
+		this.userRepository.save(user);
+	}
 
 	private List<Car> insertCars(UserDTO userDTO, User user) {
-		List<Car> cars = List.of();
+		List<Car> cars = new ArrayList<>();
 		
 		userDTO.getCars().forEach(carDTO -> {
 			Car car = CarMapper.INSTANCE.carDtoToCar(carDTO, user.getId());

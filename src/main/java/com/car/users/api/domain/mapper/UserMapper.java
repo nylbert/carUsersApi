@@ -13,13 +13,19 @@ public interface UserMapper {
 	
 	UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "authorities", ignore = true)
 	@Mapping(target = "password", ignore = true)
+	@Mapping(target = "createdAt", ignore = true)
+	@Mapping(target = "lastLogin", ignore = true)
 	@Mapping(target = "encryptedPassword", source = "password")
 	User userDtoToUser(UserDTO userDTO, @MappingTarget User user);
 	
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "authorities", ignore = true)
 	@Mapping(target = "password", ignore = true)
+	@Mapping(target = "createdAt", ignore = true)
+	@Mapping(target = "lastLogin", ignore = true)
 	@Mapping(target = "encryptedPassword", source = "password")
 	User userDtoToUser(UserDTO userDTO);
 	

@@ -31,5 +31,5 @@ public class Car {
 	private String color;
 	
 	@Column(name = "user_id")
-    private Long userId;
+    private Integer userId;
 }

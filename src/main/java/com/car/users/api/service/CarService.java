@@ -68,8 +68,8 @@ public class CarService implements ICarService {
 	}
 	
 	private void validateUniqueness(Integer id, CarDTO carDTO) {
-		Long countLicensePlate = id == null ? this.carRepository.countByLicensePlate(carDTO.licensePlate())
-				: this.carRepository.countByLicensePlateAndIdNot(carDTO.licensePlate(), id);
+		Long countLicensePlate = id == null ? this.carRepository.countByLicensePlate(carDTO.getLicensePlate())
+				: this.carRepository.countByLicensePlateAndIdNot(carDTO.getLicensePlate(), id);
 		boolean licensePlateExists = countLicensePlate > 0;
 
 		if (licensePlateExists) {
@@ -80,16 +80,16 @@ public class CarService implements ICarService {
 	private void validateRequiredFields(CarDTO carDTO) {
 		List<String> fields = new ArrayList<>();
 
-		if (carDTO.year() == null) {
+		if (carDTO.getYear() == null) {
 			fields.add(CarConstants.YEAR);
 		}
-		if (StringUtils.isBlank(carDTO.model())) {
+		if (StringUtils.isBlank(carDTO.getModel())) {
 			fields.add(CarConstants.MODEL);
 		}
-		if (StringUtils.isBlank(carDTO.color())) {
+		if (StringUtils.isBlank(carDTO.getColor())) {
 			fields.add(CarConstants.COLOR);
 		}
-		if (StringUtils.isBlank(carDTO.licensePlate())) {
+		if (StringUtils.isBlank(carDTO.getLicensePlate())) {
 			fields.add(CarConstants.LICENSE_PLATE);
 		}
 
@@ -101,11 +101,11 @@ public class CarService implements ICarService {
 	private void validateInvalidFields(CarDTO carDTO) {
 		List<String> fields = new ArrayList<>();
 
-		if (!CarUtils.isValidLicensePlate(carDTO.licensePlate())) {
+		if (!CarUtils.isValidLicensePlate(carDTO.getLicensePlate())) {
 			fields.add(CarConstants.LICENSE_PLATE);
 		}
 
-		if (!CarUtils.isValidYear(carDTO.year())) {
+		if (!CarUtils.isValidYear(carDTO.getYear())) {
 			fields.add(CarConstants.YEAR);
 		}
 

@@ -1,9 +1,14 @@
 package com.car.users.api.domain.dto;
 
-public record CarDTO(
-		Integer id,
-        Integer year,
-        String licensePlate,
-        String model,
-        String color
-) {}
+import lombok.Data;
+
+@Data
+public class CarDTO {
+	
+	private Integer id;
+	private Integer year;
+	private String licensePlate;
+	private String model;
+	private String color;
+	
+}

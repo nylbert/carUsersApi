@@ -13,11 +13,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.car.users.api.dto.UserDTO;
+import com.car.users.api.domain.dto.ErrorResponseDTO;
+import com.car.users.api.domain.dto.UserDTO;
 import com.car.users.api.service.IUserService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "API CRUD de usuários")
 public class UserController {
 
 	private IUserService userService;
@@ -27,32 +36,56 @@ public class UserController {
 	}
 	
 	@GetMapping
+	@Operation(summary = "Listar usuários", description = "Listagem de todos os usuários", tags = { "users" })
+	@ApiResponses({
+	      @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") })})
 	public ResponseEntity<List<UserDTO>> listUsers(){
-		List<UserDTO> users = this.userService.findAll();
+		List<UserDTO> users = this.userService.find();
 		return new ResponseEntity<List<UserDTO>>(users, HttpStatus.OK);
 	}
 	
 	@PostMapping
+	@Operation(summary = "Criar usuário", description = "Cria um usuário baseado no json enviado no body da requisição", tags = { "users" })
+	@ApiResponses({
+	      @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "409", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") })})
 	public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
 		UserDTO user = this.userService.insert(userDTO);
 		return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
 	}
 	
 	@GetMapping("{id}")
-	public ResponseEntity<UserDTO> listById(@PathVariable Long id){
-		UserDTO user = this.userService.findById(id);
+	@Operation(summary = "Buscar usuário por ID", description = "Encontre um usuário especifico passando o id como um parametro da URL", tags = { "users" })
+	@ApiResponses({
+	      @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") })})
+	public ResponseEntity<UserDTO> listById(@PathVariable Integer id){
+		UserDTO user = this.userService.find(id);
 		return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("{id}")
-	public ResponseEntity<UserDTO> deleteById(@PathVariable Long id){
-		this.userService.deleteById(id);
+	@Operation(summary = "Deletar Usuário", description = "Remove um usuário selecionado por id passado na URL", tags = { "users" })
+	@ApiResponses({
+	      @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") })})
+	public ResponseEntity<UserDTO> deleteById(@PathVariable Integer id){
+		this.userService.delete(id);
 		return new ResponseEntity<UserDTO>(HttpStatus.OK);
 	}
 	
 	@PutMapping("{id}")
-	public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
-		UserDTO user = this.userService.updateById(id, userDTO);
+	@Operation(summary = "Atualizar Usuário", description = "Atualiza os dados de um usuário baseado no json enviado no body da requisição", tags = { "users" })
+	@ApiResponses({
+	      @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "409", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") }),
+	      @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") })})
+	public ResponseEntity<UserDTO> updateUser(@PathVariable Integer id, @RequestBody UserDTO userDTO) {
+		UserDTO user = this.userService.update(id, userDTO);
 		return new ResponseEntity<UserDTO>(user, HttpStatus.OK);
 	}
 	

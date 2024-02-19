@@ -1,24 +1,22 @@
-package com.car.users.api.model;
+package com.car.users.api.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "car")
+@Table(name = "app_car")
 public class Car {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
-	private Long id;
+	private Integer id;
 	
 	@Column(name = "car_year", length = 4, nullable = false)
 	private Integer year;
@@ -32,7 +30,6 @@ public class Car {
 	@Column(name = "color", nullable = false)
 	private String color;
 	
-	@ManyToOne
-	@JoinColumn(name = "user_id", referencedColumnName = "id")
-	private User owner;
+	@Column(name = "user_id")
+    private Integer userId;
 }

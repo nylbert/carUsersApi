@@ -1,4 +1,4 @@
-package com.car.users.api.dto;
+package com.car.users.api.domain.dto;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +10,7 @@ import lombok.Data;
 @Data
 public class UserDTO {
 
+	private Integer id;
 	private String firstName;
 	private String lastName;
 	private String email;

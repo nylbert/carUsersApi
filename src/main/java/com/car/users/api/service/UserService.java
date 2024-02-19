@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.car.users.api.constant.UserConstants;
 import com.car.users.api.domain.dto.CarDTO;
@@ -22,6 +23,7 @@ import com.car.users.api.repository.UserRepository;
 import com.car.users.api.util.UserUtils;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService implements IUserService {
@@ -70,6 +72,7 @@ public class UserService implements IUserService {
 
 
 	@Override
+	@Transactional
 	public UserDTO insert(UserDTO userDTO) {
 		validateRequiredFields(userDTO);
 		validateInvalidFields(userDTO);
@@ -88,12 +91,14 @@ public class UserService implements IUserService {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Integer id) {
 		Optional<User> user = this.userRepository.findById(id);
 		this.userRepository.delete(user.get());
 	}
 
 	@Override
+	@Transactional
 	public UserDTO update(Integer id, UserDTO userDTO) {
 		validateRequiredFields(userDTO);
 		validateInvalidFields(userDTO);
@@ -124,10 +129,12 @@ public class UserService implements IUserService {
 	private List<Car> insertCars(UserDTO userDTO, User user) {
 		List<Car> cars = new ArrayList<>();
 		
-		userDTO.getCars().forEach(carDTO -> {
-			Car car = CarMapper.INSTANCE.carDtoToCar(carDTO, user.getId());
-			cars.add(this.carRepository.save(car));
-		});
+		if(!CollectionUtils.isEmpty(userDTO.getCars())) {
+			userDTO.getCars().forEach(carDTO -> {
+				Car car = CarMapper.INSTANCE.carDtoToCar(carDTO, user.getId());
+				cars.add(this.carRepository.save(car));
+			});
+		}
 		return cars;
 	}
 

@@ -13,6 +13,9 @@
 9. **AT-09:** Implementar CRUD de Carros.
 10. **AT-10:** Implementar Swagger.
 11. **AT-11:** Implementar endpoint de informações do usuário logado.
+12. **AT-12:** Implementar Testes unitarios
+13. **AT-13:** Implementar Requisitos desejaveis
+14. **AT-14:** Implementar Requisitos extras
 
 ## SOLUÇÃO
 
@@ -69,10 +72,13 @@ Para executar o projeto localmente, siga as instruções abaixo:
 5. O servidor estará rodando em `http://localhost:8080`
 
 É necessário ter as seguintes tecnologias instaladas para executar a API localmente:
-
 - Java 17
 - Maven
 
 Após a execução, você pode acessar a documentação da API utilizando o Swagger em: `http://localhost:8080/swagger-ui.html`
+
+### Executando os Testes Unitários
+
+Utilize o comando `mvn test`.
 
 ---

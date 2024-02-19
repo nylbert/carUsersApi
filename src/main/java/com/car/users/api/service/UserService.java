@@ -3,42 +3,41 @@ package com.car.users.api.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.car.users.api.constant.UserConstants;
 import com.car.users.api.domain.dto.CarDTO;
 import com.car.users.api.domain.dto.UserDTO;
-import com.car.users.api.domain.mapper.CarMapper;
 import com.car.users.api.domain.mapper.UserMapper;
-import com.car.users.api.domain.model.Car;
 import com.car.users.api.domain.model.User;
 import com.car.users.api.infra.exception.DuplicatedFieldException;
 import com.car.users.api.infra.exception.InvalidFieldException;
 import com.car.users.api.infra.exception.RequiredFieldException;
-import com.car.users.api.repository.CarRepository;
 import com.car.users.api.repository.UserRepository;
 import com.car.users.api.util.UserUtils;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService implements IUserService {
 
 	private UserRepository userRepository;
-	private CarRepository carRepository;
+	private ICarService carService;
 
-	public UserService(UserRepository userRepository, CarRepository carRepository) {
+	public UserService(UserRepository userRepository, ICarService carService) {
 		this.userRepository = userRepository;
-		this.carRepository = carRepository;
+		this.carService = carService;
 	}
 
 	@Override
 	public User find(String login) {
 		User user = userRepository.findByLogin(login);
 		if (user == null) {
-			throw new RuntimeException();
+			throw new UsernameNotFoundException("User not found with login: " + login);
 		}
 		return user;
 	}
@@ -51,8 +50,7 @@ public class UserService implements IUserService {
 		
 		for (User user : users) {
 			UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user);
-			List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carRepository.findByUserId(user.getId()));
-			userDTO.setCars(cars);
+			userDTO.setCars(this.carService.find(user.getId()));
 			userDTOs.add(userDTO);
 		}
 		
@@ -61,15 +59,18 @@ public class UserService implements IUserService {
 
 	@Override
 	public UserDTO find(Integer id) {
-		Optional<User> user = this.userRepository.findById(id);
-		UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(user.get());
-		List<CarDTO> cars = CarMapper.INSTANCE.carToCarDto(this.carRepository.findByUserId(id));
-		userDTO.setCars(cars);
+		UserDTO userDTO = UserMapper.INSTANCE.userToUserDto(findById(id));
+		userDTO.setCars(this.carService.find(id));
 		return userDTO;
 	}
 
+	private User findById(Integer id) {
+		return this.userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+	}
 
 	@Override
+	@Transactional
 	public UserDTO insert(UserDTO userDTO) {
 		validateRequiredFields(userDTO);
 		validateInvalidFields(userDTO);
@@ -79,39 +80,34 @@ public class UserService implements IUserService {
 		user.setCreatedAt(LocalDate.now());
 		User newUser = this.userRepository.save(user);
 		
-		List<Car> cars = insertCars(userDTO, newUser);
-		
 		UserDTO newUserDTO = UserMapper.INSTANCE.userToUserDto(newUser);
-		newUserDTO.setCars(CarMapper.INSTANCE.carToCarDto(cars));
+		newUserDTO.setCars(insertCars(userDTO, newUser));
 
 		return newUserDTO;
 	}
 
 	@Override
+	@Transactional
 	public void delete(Integer id) {
-		Optional<User> user = this.userRepository.findById(id);
-		this.userRepository.delete(user.get());
+		this.userRepository.delete(findById(id));
 	}
 
 	@Override
+	@Transactional
 	public UserDTO update(Integer id, UserDTO userDTO) {
 		validateRequiredFields(userDTO);
 		validateInvalidFields(userDTO);
 		validateUniqueness(id, userDTO);
-
-		Optional<User> optionalUser = this.userRepository.findById(id);
-		User user = optionalUser.get();
+		
+		User user = findById(id);
 
 		UserMapper.INSTANCE.userDtoToUser(userDTO, user);
 		User updatedUser = this.userRepository.save(user);
 
-		List<Car> deletedCars = this.carRepository.findByUserId(id);
-		deletedCars.forEach(car -> this.carRepository.delete(car));
-		
-		List<Car> cars = insertCars(userDTO, user);
+		this.carService.delete(id);
 		
 		UserDTO updatedUserDTO = UserMapper.INSTANCE.userToUserDto(updatedUser);
-		updatedUserDTO.setCars(CarMapper.INSTANCE.carToCarDto(cars));
+		updatedUserDTO.setCars(insertCars(userDTO, user));
 		
 		return updatedUserDTO;
 	}
@@ -121,20 +117,21 @@ public class UserService implements IUserService {
 		this.userRepository.save(user);
 	}
 
-	private List<Car> insertCars(UserDTO userDTO, User user) {
-		List<Car> cars = new ArrayList<>();
+	private List<CarDTO> insertCars(UserDTO userDTO, User user) {
+		List<CarDTO> cars = new ArrayList<>();
 		
-		userDTO.getCars().forEach(carDTO -> {
-			Car car = CarMapper.INSTANCE.carDtoToCar(carDTO, user.getId());
-			cars.add(this.carRepository.save(car));
-		});
+		if(!CollectionUtils.isEmpty(userDTO.getCars())) {
+			userDTO.getCars().forEach(carDTO -> {
+				cars.add(this.carService.insert(carDTO, user.getId()));
+			});
+		}
 		return cars;
 	}
 
 	private void validateInvalidFields(UserDTO userDTO) {
 		List<String> fields = new ArrayList<>();
 
-		if (!UserUtils.isValidEmail(userDTO.getEmail()) || !UserUtils.isValidEmail(userDTO.getEmail())) {
+		if (!UserUtils.isValidEmail(userDTO.getEmail())) {
 			fields.add(UserConstants.EMAIL);
 		}
 

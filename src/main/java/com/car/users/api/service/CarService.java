@@ -53,6 +53,12 @@ public class CarService implements ICarService {
 	}
 	
 	@Override
+	public void delete(Integer userId) {
+		List<Car> cars = this.carRepository.findByUserId(userId);
+		cars.forEach(car -> this.carRepository.delete(car));
+	}
+	
+	@Override
 	public CarDTO update(Integer id, Integer userId, CarDTO carDTO) {
 		validateRequiredFields(carDTO);
 		validateInvalidFields(carDTO);

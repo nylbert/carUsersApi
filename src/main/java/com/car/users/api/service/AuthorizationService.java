@@ -9,7 +9,7 @@ public class AuthorizationService implements UserDetailsService {
 
 	private IUserService userService;
 
-	public AuthorizationService(UserService userService) {
+	public AuthorizationService(IUserService userService) {
 		this.userService = userService;
 	}
 

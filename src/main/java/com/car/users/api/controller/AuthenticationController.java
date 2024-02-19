@@ -17,7 +17,6 @@ import com.car.users.api.domain.dto.LoginResponseDTO;
 import com.car.users.api.domain.model.User;
 import com.car.users.api.infra.security.JwtTokenService;
 import com.car.users.api.service.IUserService;
-import com.car.users.api.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,7 +35,7 @@ public class AuthenticationController {
 	private IUserService userService;
 	
 	public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService,
-			UserService userService) {
+			IUserService userService) {
 		super();
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenService = jwtTokenService;

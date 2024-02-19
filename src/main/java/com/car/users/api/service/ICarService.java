@@ -16,4 +16,6 @@ public interface ICarService {
 
 	CarDTO update(Integer id, Integer userId, CarDTO carDTO);
 
+	void delete(Integer userId);
+
 }

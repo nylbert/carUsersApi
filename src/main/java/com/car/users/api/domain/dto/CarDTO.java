@@ -1,8 +1,12 @@
 package com.car.users.api.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CarDTO {
 	
 	private Integer id;

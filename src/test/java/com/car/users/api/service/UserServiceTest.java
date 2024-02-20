@@ -13,6 +13,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.car.users.api.domain.dto.CarDTO;
 import com.car.users.api.domain.dto.UserDTO;
@@ -34,6 +37,8 @@ import com.car.users.api.infra.exception.DuplicatedFieldException;
 import com.car.users.api.infra.exception.InvalidFieldException;
 import com.car.users.api.infra.exception.RequiredFieldException;
 import com.car.users.api.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -53,7 +58,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userDTO = new UserDTO(1, "Teste", "Api", "teste.api@gmail.com",  new Date(), "testeApi123", "VerySecret123*", "81995565482", null);
+        userDTO = new UserDTO(1, "Teste", "Api", "teste.api@gmail.com",  new Date(), "testeApi123", "VerySecret123*", "81995565482", null, null);
         user = UserMapper.INSTANCE.userDtoToUser(userDTO);
         
         carDTO = new CarDTO();
@@ -122,7 +127,7 @@ class UserServiceTest {
     void updateUser_NotFound() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> userService.update(999, userDTO));
+        assertThrows(EntityNotFoundException.class, () -> userService.update(999, userDTO));
     }
 
     @Test
@@ -167,7 +172,7 @@ class UserServiceTest {
         int userId = 999;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(UsernameNotFoundException.class, () -> userService.find(userId));
+        assertThrows(EntityNotFoundException.class, () -> userService.find(userId));
     }
 
     @Test
@@ -200,6 +205,27 @@ class UserServiceTest {
 
         verify(userRepository, times(1)).save(user);
     }
+    
+    @Test
+    void deleteUsers_ShouldInvokeDeleteAllOnRepository() {
+        userService.deleteUsers();
+        
+        verify(userRepository, times(1)).deleteAll();
+    }
+
+    @Test
+    void updateUserImage_ShouldCallSaveWithUpdatedImage() throws IOException {
+        Integer userId = 1;
+        byte[] imageData = "fake image data".getBytes();
+        MultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", imageData);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        userService.updateUserImage(userId, imageFile);
+
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
 }
 
 

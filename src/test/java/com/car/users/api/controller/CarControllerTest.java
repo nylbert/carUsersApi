@@ -3,8 +3,13 @@ package com.car.users.api.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,9 +21,11 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.car.users.api.domain.dto.CarDTO;
 import com.car.users.api.domain.model.User;
@@ -100,5 +107,28 @@ class CarControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    @Test
+    void uploadCarImage_Success() throws Exception {
+        MockMultipartFile imageFile = new MockMultipartFile("image", "image.jpg", "image/jpeg", "<<jpeg data>>".getBytes());
+        
+        doNothing().when(carService).updateCarImage(userId, imageFile);
+
+        ResponseEntity<?> response = carController.uploadCarImage(1, imageFile);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(carService, times(1)).updateCarImage(1, imageFile);
+    }
+
+    @Test
+    void uploadCarImage_WhenIOException_ShouldReturnBadRequest() throws Exception {
+        MockMultipartFile mockImageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image content".getBytes());
+        
+        doThrow(IOException.class).when(carService).updateCarImage(any(Integer.class), any(MultipartFile.class));
+
+        ResponseEntity<?> response = carController.uploadCarImage(1, mockImageFile);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Could not upload image", response.getBody());
+    }
 }
 

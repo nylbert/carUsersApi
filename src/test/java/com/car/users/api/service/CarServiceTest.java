@@ -9,11 +9,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.car.users.api.domain.dto.CarDTO;
 import com.car.users.api.domain.model.Car;
@@ -28,6 +33,8 @@ import com.car.users.api.infra.exception.DuplicatedFieldException;
 import com.car.users.api.infra.exception.InvalidFieldException;
 import com.car.users.api.infra.exception.RequiredFieldException;
 import com.car.users.api.repository.CarRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class CarServiceTest {
@@ -43,8 +50,8 @@ class CarServiceTest {
 
     @BeforeEach
     void setUp() {
-        carDTO = new CarDTO(1, 2020, "ABC-1234", "Black", "Model S");
-        car = new Car(carDTO.getId(), carDTO.getYear(), carDTO.getLicensePlate(), carDTO.getModel(), carDTO.getColor(), 1);
+        carDTO = new CarDTO(1, 2020, "ABC-1234", "Black", "Model S", null);
+        car = new Car(carDTO.getId(), carDTO.getYear(), carDTO.getLicensePlate(), carDTO.getModel(), carDTO.getColor(), 1, null);
     }
     
     @Test
@@ -128,6 +135,30 @@ class CarServiceTest {
         carDTO.setYear(12);
 
         assertThrows(InvalidFieldException.class, () -> carService.insert(carDTO, 1));
+    }
+
+    @Test
+    void updateUserImage_ShouldCallSaveWithUpdatedImage() throws IOException {
+        Integer userId = 1;
+        byte[] imageData = "fake image data".getBytes();
+        MultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", imageData);
+
+        when(carRepository.findById(userId)).thenReturn(Optional.of(car));
+
+        carService.updateCarImage(userId, imageFile);
+
+        verify(carRepository, times(1)).save(any(Car.class));
+    }
+    
+    @Test
+    void updateUserImage_ThrowsEntityNotFoundException() throws IOException {
+        Integer userId = 1;
+        byte[] imageData = "fake image data".getBytes();
+        MultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", imageData);
+
+        when(carRepository.findById(userId)).thenReturn(Optional.empty());
+        
+        assertThrows(EntityNotFoundException.class, () -> carService.updateCarImage(userId, imageFile));
     }
 }
 

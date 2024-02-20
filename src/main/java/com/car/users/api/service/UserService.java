@@ -207,4 +207,10 @@ public class UserService implements IUserService {
 			throw new DuplicatedFieldException(UserConstants.LOGIN);
 		}
 	}
+	
+	@Override
+	@Transactional
+	public void deleteUsers() {
+		this.userRepository.deleteAll();
+	}
 }

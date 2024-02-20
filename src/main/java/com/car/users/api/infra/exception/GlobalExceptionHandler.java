@@ -8,11 +8,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.car.users.api.domain.dto.ErrorResponseDTO;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	
     @ExceptionHandler(RequiredFieldException.class)
     public ResponseEntity<ErrorResponseDTO> handleRequiredFieldException(RequiredFieldException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                             .body(new ErrorResponseDTO(ex.getMessage(), 400));
+    }
+    
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEntityNotFoundException(EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                              .body(new ErrorResponseDTO(ex.getMessage(), 400));
     }

@@ -7,10 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.car.users.api.domain.dto.CarDTO;
 import com.car.users.api.domain.dto.UserDTO;
@@ -124,7 +128,7 @@ class UserControllerTest {
     void deleteById_Success() {
         doNothing().when(userService).delete(anyInt());
 
-        ResponseEntity<UserDTO> response = userController.deleteById(1);
+        ResponseEntity<?> response = userController.deleteById(1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(userService, times(1)).delete(1);
@@ -183,6 +187,30 @@ class UserControllerTest {
         });
 
         assertTrue(exception instanceof RequiredFieldException);
+    }
+    
+    @Test
+    void uploadUserImage_Success() throws Exception {
+        MockMultipartFile imageFile = new MockMultipartFile("image", "image.jpg", "image/jpeg", "<<jpeg data>>".getBytes());
+        
+        doNothing().when(userService).updateUserImage(anyInt(), any(MultipartFile.class));
+
+        ResponseEntity<?> response = userController.uploadUserImage(1, imageFile);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(userService, times(1)).updateUserImage(1, imageFile);
+    }
+
+    @Test
+    void uploadUserImage_WhenIOException_ShouldReturnBadRequest() throws Exception {
+        MockMultipartFile mockImageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image content".getBytes());
+        
+        doThrow(IOException.class).when(userService).updateUserImage(any(Integer.class), any(MultipartFile.class));
+
+        ResponseEntity<?> response = userController.uploadUserImage(1, mockImageFile);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Could not upload image", response.getBody());
     }
 }
 

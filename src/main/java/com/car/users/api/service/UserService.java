@@ -1,5 +1,6 @@
 package com.car.users.api.service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.car.users.api.constant.UserConstants;
 import com.car.users.api.domain.dto.CarDTO;
@@ -20,6 +22,7 @@ import com.car.users.api.repository.UserRepository;
 import com.car.users.api.util.UserUtils;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -66,7 +69,7 @@ public class UserService implements IUserService {
 
 	private User findById(Integer id) {
 		return this.userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
 	}
 
 	@Override
@@ -206,5 +209,19 @@ public class UserService implements IUserService {
 		if (loginExists) {
 			throw new DuplicatedFieldException(UserConstants.LOGIN);
 		}
+	}
+	
+	@Override
+	@Transactional
+	public void deleteUsers() {
+		this.userRepository.deleteAll();
+	}
+	
+	@Override
+	@Transactional
+	public void updateUserImage(Integer id, MultipartFile imageFile) throws IOException {
+		User user = findById(id);
+		user.setImage(imageFile.getBytes());
+		userRepository.save(user);
 	}
 }

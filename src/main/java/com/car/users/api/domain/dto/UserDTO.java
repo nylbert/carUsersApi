@@ -6,10 +6,12 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
@@ -26,5 +28,6 @@ public class UserDTO {
 	private String password;
 	private String phone;
 	private List<CarDTO> cars;
+	private byte[] image;
 
 }

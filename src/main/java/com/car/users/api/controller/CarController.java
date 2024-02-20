@@ -1,6 +1,7 @@
 	package com.car.users.api.controller;
 	
-	import java.util.List;
+	import java.io.IOException;
+import java.util.List;
 	
 	import org.springframework.http.HttpStatus;
 	import org.springframework.http.ResponseEntity;
@@ -12,9 +13,11 @@
 	import org.springframework.web.bind.annotation.PutMapping;
 	import org.springframework.web.bind.annotation.RequestBody;
 	import org.springframework.web.bind.annotation.RequestMapping;
-	import org.springframework.web.bind.annotation.RestController;
-	
-	import com.car.users.api.domain.dto.CarDTO;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.car.users.api.domain.dto.CarDTO;
 	import com.car.users.api.domain.dto.ErrorResponseDTO;
 	import com.car.users.api.domain.model.User;
 	import com.car.users.api.service.ICarService;
@@ -89,6 +92,21 @@
 		public ResponseEntity<CarDTO> updateCarById(@PathVariable Integer id, @RequestBody CarDTO carDTO) {
 			CarDTO car = this.carService.update(id, getUserId(), carDTO);
 			return new ResponseEntity<CarDTO>(car, HttpStatus.OK);
+		}
+		
+		@PutMapping("{id}/image")
+		@Operation(summary = "Upload da Foto do Carro", description = "Atualiza a foto de um carro baseado na imagem enviado no body da requisição via multipart file", tags = { "cars" })
+		@ApiResponses({
+		      @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema(implementation = CarDTO.class), mediaType = "application/json") }),
+		      @ApiResponse(responseCode = "400", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") }),
+		      @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema(implementation = ErrorResponseDTO.class), mediaType = "application/json") })})
+		public ResponseEntity<?> uploadCarImage(@PathVariable Integer id, @RequestParam("image") MultipartFile imageFile) {
+			try {
+				this.carService.updateCarImage(id, imageFile);
+				return ResponseEntity.ok().build();
+			} catch (IOException e) {
+				return ResponseEntity.badRequest().body("Could not upload image");
+			}
 		}
 		
 		private Integer getUserId() {

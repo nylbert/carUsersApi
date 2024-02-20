@@ -1,10 +1,12 @@
 package com.car.users.api.domain.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarDTO {
@@ -14,5 +16,6 @@ public class CarDTO {
 	private String licensePlate;
 	private String model;
 	private String color;
+	private byte[] image;
 	
 }

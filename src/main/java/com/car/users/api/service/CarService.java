@@ -1,9 +1,11 @@
 package com.car.users.api.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.car.users.api.constant.CarConstants;
 import com.car.users.api.domain.dto.CarDTO;
@@ -16,6 +18,8 @@ import com.car.users.api.repository.CarRepository;
 import com.car.users.api.util.CarUtils;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CarService implements ICarService {
@@ -118,5 +122,13 @@ public class CarService implements ICarService {
 		if (fields.size() > 0) {
 			throw new InvalidFieldException(fields);
 		}
+	}
+	
+	@Override
+	@Transactional
+	public void updateCarImage(Integer id, MultipartFile imageFile) throws IOException {
+		Car car = this.carRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Car not found with id: " + id));
+		car.setImage(imageFile.getBytes());
+		this.carRepository.save(car);
 	}
 }

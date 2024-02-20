@@ -15,10 +15,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "app_user")
 public class User implements UserDetails {
@@ -56,6 +59,10 @@ public class User implements UserDetails {
 	
 	@Column(name = "lastLogin")
 	private LocalDate lastLogin;
+	
+	@Lob
+	@Column(name = "image")
+    private byte[] image;
 	
 	public void setEncryptedPassword(String password) {
 		this.password = new BCryptPasswordEncoder().encode(password);

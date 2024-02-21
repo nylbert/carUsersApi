@@ -90,14 +90,14 @@ Adicionei a documentação javadoc apenas nas interfaces dos services: IUserServ
 
 ### Upload de imagens
 
-Realizar o updload de imagens através dos endpoints:
+Realizar o upload de imagens através dos endpoints:
 `/api/user/{id}/image` e `/api/cars/{id}/image`
 
 No arquivo postman contem um exemplo de como deve ser feito o request
 
 ### Scheduling
 
-Para esse requisito criei um agendamento bem simples o `CarScheduler` que efetua a exclusão de todos os carros cadastros uma vez por dia às 00:00. 
+Para esse requisito criei um agendamento bem simples o `CarScheduler` que efetua a exclusão de todos os carros cadastrados uma vez por dia às 00:00. 
 
 ### Front
 

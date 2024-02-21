@@ -213,12 +213,6 @@ public class UserService implements IUserService {
 	
 	@Override
 	@Transactional
-	public void deleteUsers() {
-		this.userRepository.deleteAll();
-	}
-	
-	@Override
-	@Transactional
 	public void updateUserImage(Integer id, MultipartFile imageFile) throws IOException {
 		User user = findById(id);
 		user.setImage(imageFile.getBytes());

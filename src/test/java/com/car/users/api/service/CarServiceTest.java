@@ -138,27 +138,34 @@ class CarServiceTest {
     }
 
     @Test
-    void updateUserImage_ShouldCallSaveWithUpdatedImage() throws IOException {
-        Integer userId = 1;
+    void updateCarImage_ShouldCallSaveWithUpdatedImage() throws IOException {
+        Integer carId = 1;
         byte[] imageData = "fake image data".getBytes();
         MultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", imageData);
 
-        when(carRepository.findById(userId)).thenReturn(Optional.of(car));
+        when(carRepository.findById(carId)).thenReturn(Optional.of(car));
 
-        carService.updateCarImage(userId, imageFile);
+        carService.updateCarImage(carId, imageFile);
 
         verify(carRepository, times(1)).save(any(Car.class));
     }
     
     @Test
-    void updateUserImage_ThrowsEntityNotFoundException() throws IOException {
-        Integer userId = 1;
+    void updateCarImage_ThrowsEntityNotFoundException() throws IOException {
+        Integer carId = 1;
         byte[] imageData = "fake image data".getBytes();
         MultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", imageData);
 
-        when(carRepository.findById(userId)).thenReturn(Optional.empty());
+        when(carRepository.findById(carId)).thenReturn(Optional.empty());
         
-        assertThrows(EntityNotFoundException.class, () -> carService.updateCarImage(userId, imageFile));
+        assertThrows(EntityNotFoundException.class, () -> carService.updateCarImage(carId, imageFile));
+    }
+    
+    @Test
+    void deleteCars_ShouldInvokeDeleteAllOnRepository() {
+        carService.delete();
+        
+        verify(carRepository, times(1)).deleteAll();
     }
 }
 

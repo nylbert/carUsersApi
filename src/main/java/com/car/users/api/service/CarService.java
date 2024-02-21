@@ -131,4 +131,9 @@ public class CarService implements ICarService {
 		car.setImage(imageFile.getBytes());
 		this.carRepository.save(car);
 	}
+	
+	@Override
+	public void delete() {
+		this.carRepository.deleteAll();;
+	}
 }

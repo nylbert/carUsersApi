@@ -18,6 +18,7 @@ public interface CarMapper {
 	@Mapping(target = "userId", source = "userId")
 	Car carDtoToCar(CarDTO carDTO, Integer userId);
 	
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "userId", ignore = true)
 	Car carDtoToCar(CarDTO carDTO, @MappingTarget Car car);
 	

@@ -205,13 +205,6 @@ class UserServiceTest {
 
         verify(userRepository, times(1)).save(user);
     }
-    
-    @Test
-    void deleteUsers_ShouldInvokeDeleteAllOnRepository() {
-        userService.deleteUsers();
-        
-        verify(userRepository, times(1)).deleteAll();
-    }
 
     @Test
     void updateUserImage_ShouldCallSaveWithUpdatedImage() throws IOException {

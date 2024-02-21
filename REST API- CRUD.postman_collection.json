@@ -30,7 +30,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Oliveira1\",\n    \"email\": \"carlos@example3.com\",\n    \"birthday\": \"10/11/1982\",\n    \"login\": \"carlos3.oliveira\",\n    \"password\": \"Senha456*\",\n    \"phone\": \"81997766554\",\n    \"cars\": [\n      {\n        \"year\": 2020,\n        \"licensePlate\": \"DEF5678\",\n        \"model\": \"Honda Civic\",\n        \"color\": \"Blue\"\n      }\n    ]\n  }",
+							"raw": "{\n    \"firstName\": \"Carlos\",\n    \"lastName\": \"Oliveira1\",\n    \"email\": \"carlos1@example3.com\",\n    \"birthday\": \"10/11/1982\",\n    \"login\": \"carlos31.oliveira\",\n    \"password\": \"Senha456*\",\n    \"phone\": \"81997766554\",\n    \"cars\": [\n      {\n        \"year\": 2020,\n        \"licensePlate\": \"DEF-5178\",\n        \"model\": \"Honda Civic\",\n        \"color\": \"Blue\"\n      }\n    ]\n  }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -118,7 +118,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+							"raw": "{\n  \"firstName\": \"Ana\",\n  \"lastName\": \"Almeida\",\n  \"email\": \"ana3@example.com\",\n  \"birthday\": \"12/03/1996\",\n  \"login\": \"ana3.almeida\",\n  \"password\": \"Senha987*\",\n  \"phone\": \"81995585465\",\n  \"cars\": [\n    {\n      \"year\": 2015,\n      \"licensePlate\": \"JKL-9012\",\n      \"model\": \"Volkswagen Golf\",\n      \"color\": \"White\"\n    },\n    {\n      \"year\": 2022,\n      \"licensePlate\": \"MNO-4567\",\n      \"model\": \"Hyundai Sonata\",\n      \"color\": \"Gray\"\n    }\n  ]\n}\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -126,18 +126,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/info?id=1",
+							"raw": "http://localhost:8080/api/users/33",
+							"protocol": "http",
 							"host": [
-								"{{base_url}}"
+								"localhost"
 							],
+							"port": "8080",
 							"path": [
-								"info"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1"
-								}
+								"api",
+								"users",
+								"33"
 							]
 						},
 						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -173,7 +171,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/users/1",
+							"raw": "http://localhost:8080/api/users/98",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -182,7 +180,7 @@
 							"path": [
 								"api",
 								"users",
-								"1"
+								"98"
 							]
 						},
 						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
@@ -195,7 +193,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/users/1",
+							"raw": "http://localhost:8080/api/users/33",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -204,7 +202,7 @@
 							"path": [
 								"api",
 								"users",
-								"1"
+								"33"
 							]
 						}
 					},
@@ -254,7 +252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"login\": \"ana.almeida\",\n    \"password\": \"Senha987*\"\n}",
+							"raw": "{\n    \"login\": \"teste.heroku\",\n    \"password\": \"Zenga00*\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -289,7 +287,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6ImFuYS5hbG1laWRhIiwiZXhwIjoxNzA4MjIxMjYzfQ.d47U_Be59r74VUL8mEnB4HmGsz4qHGKMqIMbubnoKro",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
 									"type": "string"
 								}
 							]
@@ -314,11 +312,21 @@
 				{
 					"name": "Create car",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"year\": 2020,\n        \"licensePlate\": \"DEF5678\",\n        \"model\": \"Honda Civic\",\n        \"color\": \"Blue\"\n}",
+							"raw": "{\n        \"year\": 2020,\n        \"licensePlate\": \"DEF-5678\",\n        \"model\": \"Honda Civic\",\n        \"color\": \"Blue\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -343,11 +351,21 @@
 				{
 					"name": "Update car",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"year\": 2020,\n        \"licensePlate\": \"DEF5678\",\n        \"model\": \"Honda Civic\",\n        \"color\": \"Blue\"\n}",
+							"raw": "{\n        \"year\": 2020,\n        \"licensePlate\": \"DEF-5678\",\n        \"model\": \"Honda Civic\",\n        \"color\": \"Blue\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -355,7 +373,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/cars/1",
+							"raw": "http://localhost:8080/api/cars/132",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -364,7 +382,7 @@
 							"path": [
 								"api",
 								"cars",
-								"1"
+								"132"
 							]
 						}
 					},
@@ -373,10 +391,20 @@
 				{
 					"name": "Delete car",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/cars/1",
+							"raw": "http://localhost:8080/api/cars/132",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -385,7 +413,7 @@
 							"path": [
 								"api",
 								"cars",
-								"1"
+								"132"
 							]
 						}
 					},
@@ -394,10 +422,20 @@
 				{
 					"name": "FindById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/cars/1",
+							"raw": "http://localhost:8080/api/cars/131",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -406,7 +444,7 @@
 							"path": [
 								"api",
 								"cars",
-								"1"
+								"131"
 							]
 						}
 					},
@@ -415,6 +453,16 @@
 				{
 					"name": "Upload image",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -428,7 +476,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/cars/16/image",
+							"raw": "http://localhost:8080/api/cars/129/image",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -437,7 +485,7 @@
 							"path": [
 								"api",
 								"cars",
-								"16",
+								"129",
 								"image"
 							]
 						}
@@ -457,7 +505,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6ImFuYS5hbG1laWRhIiwiZXhwIjoxNzA4MjM4MzA3fQ.ChB_a6uoHB_ycqhTLbrUjOXFtLfxpj8ITQHBLxkK63w",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InRlc3RlLmhlcm9rdSIsImV4cCI6MTcwODQ3OTU1Nn0.t2b4TFMQonx1bQKSCvFUN8FeG983O5VG0p-sntpqJQ0",
 									"type": "string"
 								}
 							]

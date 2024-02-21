@@ -35,7 +35,7 @@ As camadas se comunicam entre si de forma organizada, seguindo o fluxo de contro
 
 As principais tecnologias, frameworks e bibliotecas utilizadas na implementação do projeto são:
 
-- Spring Boot
+- Spring Boot 3
 - Spring Security
 - Spring Data JPA
 - Junit 5
@@ -46,27 +46,20 @@ As principais tecnologias, frameworks e bibliotecas utilizadas na implementaçã
 
 Essas tecnologias foram escolhidas por sua robustez, facilidade de uso e suporte à construção de APIs RESTful escaláveis e seguras.
 
-### Decisões de Design
-
-Durante o desenvolvimento da aplicação, foram tomadas as seguintes decisões de design:
-
-- Uso de DTOs e Mappers
-- Tratamento de Exceções Personalizado
-
-Essas decisões foram tomadas com base nos requisitos do projeto, nas melhores práticas de desenvolvimento e nas necessidades de escalabilidade e manutenibilidade da aplicação.
-
 ### Testes Unitários
 
-Os testes unitários são uma parte fundamental do processo de desenvolvimento de software, garantindo que cada componente da aplicação funcione conforme o esperado de forma isolada. Para isso, foram elaborados testes unitários utilizando o framework JUnit 5.
+Os testes unitários são uma parte fundamental do processo de desenvolvimento de software, garantindo que cada componente da aplicação funcione conforme o esperado de forma isolada. Para isso utilizei o framework JUnit 5.
 
-Os testes unitários abrangem diversas partes da aplicação, incluindo os serviços, controllers, mappers e outras classes que contenham lógica de negócio. O objetivo é verificar se cada unidade de código se comporta conforme o esperado em diferentes cenários.
+Implementei os testes unitarios focando nos controllers e nos services.
+
+A cobertura ficou em cerca de 87%
 
 ### Executando o Projeto
 
 Para executar o projeto localmente, siga as instruções abaixo:
 
 1. Clone este repositório: `git clone https://github.com/nylbert/carUsersApi.git`
-2. Navegue até o diretório do projeto: `cd carusersapi`
+2. Navegue até o diretório do projeto: `cd carUsersApi`
 3. Compile o projeto: `mvn clean package`
 4. Execute o projeto: `java -jar target/api-0.0.1-SNAPSHOT.jar`
 5. O servidor estará rodando em `http://localhost:8080`
@@ -83,6 +76,35 @@ Utilize o comando `mvn test`.
 
 ### URL da aplicação no Heroku
 
-https://user-car-api-2197b529f599.herokuapp.com/api/
+O repositório escolhido para deploy da aplicação foi o Heroku:
+
+`https://user-car-api-2197b529f599.herokuapp.com/api/`
+
+### Postman
+
+Na pasta raiz do projeto encontra-se o arquivo `REST API- CRUD.postman_collection.json` que contem requests para todos os endpoints da API.
+
+### Javadocs
+
+Adicionei a documentação javadoc apenas nas interfaces dos services: IUserService e ICarService por serem as classes focadas nas regras de negócio.
+
+### Upload de imagens
+
+Realizar o updload de imagens através dos endpoints:
+`/api/user/{id}/image` e `/api/cars/{id}/image`
+
+No arquivo postman contem um exemplo de como deve ser feito o request
+
+### Scheduling
+
+Para esse requisito criei um agendamento bem simples o `CarScheduler` que efetua a exclusão de todos os carros cadastros uma vez por dia às 00:00. 
+
+### Front
+
+O front foi construído com angular 15 e node 18. 
+
+Devido ao tempo limitado foi construído visando `práticidade` então não se assustem rsrs.
+
+Para mais informações de como rodar o front ler o README.md do projeto em: `https://github.com/nylbert/carsUsersFront` 
 
 ---
